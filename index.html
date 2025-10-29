@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -87,6 +87,29 @@
         .info-text {
             font-size: 1.1em;
             color: #333;
+        }
+
+        .jump-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .jump-button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .jump-button:active {
+            transform: translateY(0);
         }
 
         #map {
@@ -191,11 +214,11 @@
     <div class="container">
         <header>
             <h1>🌏 Familie Linthe auf großer Reise</h1>
-            <p class="subtitle">Following our journey across the Pacific</p>
+            <p class="subtitle">Unsere Reise durch den Pazifik</p>
         </header>
 
         <div class="current-location" id="currentLocation">
-            <h2>📍 Current Location</h2>
+            <h2>📍 Aktueller Standort</h2>
             <div class="location-info">
                 <div class="info-item">
                     <div class="info-icon">🗺️</div>
@@ -205,6 +228,13 @@
                     <div class="info-icon">📅</div>
                     <div class="info-text" id="currentDate"></div>
                 </div>
+                <div class="info-item">
+                    <div class="info-icon">📊</div>
+                    <div class="info-text" id="currentProgress"></div>
+                </div>
+                <div class="info-item">
+                    <button class="jump-button" id="jumpToCurrentBtn">🎯 Zum aktuellen Ort springen</button>
+                </div>
             </div>
         </div>
 
@@ -213,19 +243,19 @@
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-number" id="daysTotal">60</div>
-                <div class="stat-label">Total Days</div>
+                <div class="stat-label">Gesamte Tage</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number" id="daysElapsed">0</div>
-                <div class="stat-label">Days Traveled</div>
+                <div class="stat-label">Tage Gereist</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number" id="citiesCount">0</div>
-                <div class="stat-label">Cities Visited</div>
+                <div class="stat-label">Besuchte Städte</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number" id="countriesCount">3</div>
-                <div class="stat-label">Countries</div>
+                <div class="stat-label">Länder</div>
             </div>
         </div>
     </div>
@@ -266,18 +296,18 @@
         legend.onAdd = function (map) {
             const div = L.DomUtil.create('div', 'legend');
             div.innerHTML = `
-                <h4>Journey Status</h4>
+                <h4>Reisestatus</h4>
                 <div class="legend-item">
                     <div class="legend-icon current"></div>
-                    <span>Current Location</span>
+                    <span>Aktueller Standort</span>
                 </div>
                 <div class="legend-item">
                     <div class="legend-icon completed"></div>
-                    <span>Completed</span>
+                    <span>Abgeschlossen</span>
                 </div>
                 <div class="legend-item">
                     <div class="legend-icon upcoming"></div>
-                    <span>Upcoming</span>
+                    <span>Bevorstehend</span>
                 </div>
             `;
             return div;
@@ -321,26 +351,30 @@
             const end = new Date(endDate);
 
             if (startDate === endDate) {
-                return start.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                return start.toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' });
             }
 
             // Same month and year
             if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
-                return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.getDate()}, ${end.getFullYear()}`;
+                return `${start.getDate()}. - ${end.getDate()}. ${start.toLocaleDateString('de-DE', { month: 'short', year: 'numeric' })}`;
             }
 
             // Same year
             if (start.getFullYear() === end.getFullYear()) {
-                return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}, ${end.getFullYear()}`;
+                return `${start.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })} - ${end.toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' })}`;
             }
 
             // Different years
-            return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} - ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+            return `${start.toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' })} - ${end.toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' })}`;
         }
 
         // Update current location info
         document.getElementById('currentDate').textContent = formatDateRange(currentStop.startDate, currentStop.endDate);
         document.getElementById('currentPlace').textContent = `${currentStop.location}, ${currentStop.country}`;
+
+        // Update progress info
+        const progressText = `Station ${currentIndex + 1} von ${itinerary.length}`;
+        document.getElementById('currentProgress').textContent = progressText;
 
         // Add markers and route
         const routeCoordinates = [];
@@ -378,7 +412,7 @@
                 const start = new Date(stop.startDate);
                 const end = new Date(stop.endDate);
                 const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-                const nightsText = nights === 0 ? '(transit)' : nights === 1 ? '(1 night)' : `(${nights} nights)`;
+                const nightsText = nights === 0 ? '(Transit)' : nights === 1 ? '(1 Nacht)' : `(${nights} Nächte)`;
 
                 marker.bindPopup(`
                     <b>${stop.location}</b><br>
@@ -417,6 +451,14 @@
         // Fit map to show route
         const bounds = L.latLngBounds(routeCoordinates);
         map.fitBounds(bounds, { padding: [50, 50] });
+
+        // Add jump to current location button functionality
+        document.getElementById('jumpToCurrentBtn').addEventListener('click', function() {
+            const currentCoords = [currentStop.lat, currentStop.lng];
+            map.flyTo(currentCoords, 10, {
+                duration: 1.5
+            });
+        });
     </script>
 </body>
 </html>
