@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Familie Linthe auf großer Reise</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .current-location {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .current-location h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .location-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .info-text {
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        #map {
+            width: 100%;
+            height: 600px;
+        }
+
+        .legend {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .legend h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            gap: 10px;
+        }
+
+        .legend-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .current {
+            background: #ff4444;
+            animation: pulse 2s infinite;
+        }
+
+        .upcoming {
+            background: #4CAF50;
+        }
+
+        .completed {
+            background: #999;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.1);
+            }
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            #map {
+                height: 400px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌏 Familie Linthe auf großer Reise</h1>
+            <p class="subtitle">Following our journey across the Pacific</p>
+        </header>
+
+        <div class="current-location" id="currentLocation">
+            <h2>📍 Current Location</h2>
+            <div class="location-info">
+                <div class="info-item">
+                    <div class="info-icon">🗺️</div>
+                    <div class="info-text" id="currentPlace"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">📅</div>
+                    <div class="info-text" id="currentDate"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="map"></div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="daysTotal">60</div>
+                <div class="stat-label">Total Days</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="daysElapsed">0</div>
+                <div class="stat-label">Days Traveled</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="citiesCount">0</div>
+                <div class="stat-label">Cities Visited</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="countriesCount">3</div>
+                <div class="stat-label">Countries</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Itinerary data with coordinates and date ranges
+        const itinerary = [
+            { startDate: '2025-11-01', endDate: '2025-11-01', location: 'Berlin', country: 'Germany', lat: 52.5200, lng: 13.4050, note: 'Departure' },
+            { startDate: '2025-11-01', endDate: '2025-11-04', location: 'Auckland', country: 'New Zealand', lat: -36.8485, lng: 174.7633, note: 'Cornwall Park, Auckland Domain & free day' },
+            { startDate: '2025-11-04', endDate: '2025-11-08', location: 'Whangarei', country: 'New Zealand', lat: -35.7253, lng: 174.3230, note: 'Beaches, waterfalls, Waipoua & Tane Mahuta' },
+            { startDate: '2025-11-08', endDate: '2025-11-13', location: 'Coromandel', country: 'New Zealand', lat: -36.7577, lng: 175.5008, note: 'Hot Water Beach, Cathedral Cove, Thames & Whangamata' },
+            { startDate: '2025-11-13', endDate: '2025-11-17', location: 'Rotorua', country: 'New Zealand', lat: -38.1368, lng: 176.2497, note: 'Kuirau Park, Wai-O-Tapu, Government Gardens & Polynesian Spa' },
+            { startDate: '2025-11-17', endDate: '2025-11-21', location: 'Tongariro', country: 'New Zealand', lat: -39.2000, lng: 175.5833, note: 'Whakapapa, Glowworm Caves, Taranaki Falls & Mt. Ruapehu' },
+            { startDate: '2025-11-21', endDate: '2025-11-24', location: 'Napier', country: 'New Zealand', lat: -39.4928, lng: 176.9120, note: 'Art Deco city exploration' },
+            { startDate: '2025-11-24', endDate: '2025-11-26', location: 'Wellington', country: 'New Zealand', lat: -41.2865, lng: 174.7762, note: 'Te Papa Museum, Cable Car & Botanical Garden' },
+            { startDate: '2025-11-26', endDate: '2025-11-30', location: 'Kaikoura', country: 'New Zealand', lat: -42.4007, lng: 173.6813, note: 'Ferry to South Island, whale watching & Peninsula Walkway' },
+            { startDate: '2025-11-30', endDate: '2025-12-03', location: 'Christchurch', country: 'New Zealand', lat: -43.5321, lng: 172.6362, note: 'Hagley Park, Botanical Garden & Akaroa trip' },
+            { startDate: '2025-12-03', endDate: '2025-12-07', location: 'Lake Tekapo', country: 'New Zealand', lat: -43.8834, lng: 170.4769, note: 'Camper pickup, lake exploration, Tekapo Springs & Lake Alexandrina' },
+            { startDate: '2025-12-07', endDate: '2025-12-10', location: 'Lake Matheson', country: 'New Zealand', lat: -43.4390, lng: 170.0156, note: 'Mirror reflections, Fox Glacier Valley Walk & Gillespies Beach' },
+            { startDate: '2025-12-10', endDate: '2025-12-12', location: 'Punakaiki', country: 'New Zealand', lat: -42.1125, lng: 171.3358, note: 'Pancake Rocks, Truman Track & Pororari River Track' },
+            { startDate: '2025-12-12', endDate: '2025-12-16', location: 'Marahau', country: 'New Zealand', lat: -40.9667, lng: 173.0167, note: 'Abel Tasman, water taxi & hiking, Split Apple Rock' },
+            { startDate: '2025-12-16', endDate: '2025-12-18', location: 'Christchurch', country: 'New Zealand', lat: -43.5321, lng: 172.6362, note: 'Return to Christchurch' },
+            { startDate: '2025-12-18', endDate: '2025-12-23', location: 'Melbourne', country: 'Australia', lat: -37.8136, lng: 144.9631, note: 'Exploring Melbourne' },
+            { startDate: '2025-12-23', endDate: '2025-12-30', location: 'Sydney', country: 'Australia', lat: -33.8688, lng: 151.2093, note: 'Bondi Beach, Manly Beach & Bondi to Bradley Coastal Walk' },
+            { startDate: '2025-12-30', endDate: '2025-12-30', location: 'Ho Chi Minh City', country: 'Vietnam', lat: 10.8231, lng: 106.6297, note: 'Final destination' }
+        ];
+
+        // Initialize map
+        const map = L.map('map').setView([-40, 165], 5);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Add legend
+        const legend = L.control({ position: 'bottomright' });
+        legend.onAdd = function (map) {
+            const div = L.DomUtil.create('div', 'legend');
+            div.innerHTML = `
+                <h4>Journey Status</h4>
+                <div class="legend-item">
+                    <div class="legend-icon current"></div>
+                    <span>Current Location</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon completed"></div>
+                    <span>Completed</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon upcoming"></div>
+                    <span>Upcoming</span>
+                </div>
+            `;
+            return div;
+        };
+        legend.addTo(map);
+
+        // Get current date (you can change this to simulate different dates)
+        const today = new Date();
+
+        // Find current location based on date ranges
+        let currentStop = null;
+        let currentIndex = 0;
+
+        for (let i = 0; i < itinerary.length; i++) {
+            const startDate = new Date(itinerary[i].startDate);
+            const endDate = new Date(itinerary[i].endDate);
+            endDate.setHours(23, 59, 59, 999); // Include the full end date
+
+            if (today >= startDate && today <= endDate) {
+                currentStop = itinerary[i];
+                currentIndex = i;
+                break;
+            }
+        }
+
+        // If before trip starts
+        if (today < new Date(itinerary[0].startDate)) {
+            currentStop = itinerary[0];
+            currentIndex = 0;
+        }
+
+        // If after trip ends
+        if (!currentStop) {
+            currentStop = itinerary[itinerary.length - 1];
+            currentIndex = itinerary.length - 1;
+        }
+
+        // Format date range
+        function formatDateRange(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            if (startDate === endDate) {
+                return start.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            }
+
+            // Same month and year
+            if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+                return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.getDate()}, ${end.getFullYear()}`;
+            }
+
+            // Same year
+            if (start.getFullYear() === end.getFullYear()) {
+                return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}, ${end.getFullYear()}`;
+            }
+
+            // Different years
+            return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} - ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+        }
+
+        // Update current location info
+        document.getElementById('currentDate').textContent = formatDateRange(currentStop.startDate, currentStop.endDate);
+        document.getElementById('currentPlace').textContent = `${currentStop.location}, ${currentStop.country}`;
+
+        // Add markers and route
+        const routeCoordinates = [];
+        const uniqueLocations = new Map();
+
+        itinerary.forEach((stop, index) => {
+            const coords = [stop.lat, stop.lng];
+            routeCoordinates.push(coords);
+
+            // Track unique locations for city count
+            const locationKey = `${stop.location}-${stop.country}`;
+            if (!uniqueLocations.has(locationKey)) {
+                uniqueLocations.set(locationKey, true);
+
+                let markerColor = '#999'; // completed (gray)
+                let markerSize = 8;
+
+                if (index === currentIndex) {
+                    markerColor = '#ff4444'; // current (red)
+                    markerSize = 15;
+                } else if (index > currentIndex) {
+                    markerColor = '#4CAF50'; // upcoming (green)
+                }
+
+                const marker = L.circleMarker(coords, {
+                    radius: markerSize,
+                    fillColor: markerColor,
+                    color: '#fff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).addTo(map);
+
+                // Calculate number of nights
+                const start = new Date(stop.startDate);
+                const end = new Date(stop.endDate);
+                const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+                const nightsText = nights === 0 ? '(transit)' : nights === 1 ? '(1 night)' : `(${nights} nights)`;
+
+                marker.bindPopup(`
+                    <b>${stop.location}</b><br>
+                    ${stop.country}<br>
+                    ${formatDateRange(stop.startDate, stop.endDate)} ${nightsText}<br>
+                    <i>${stop.note}</i>
+                `);
+
+                // Add click event to zoom in on location
+                marker.on('click', function() {
+                    map.flyTo(coords, 10, {
+                        duration: 1.5
+                    });
+                });
+            }
+        });
+
+        // Draw route line
+        L.polyline(routeCoordinates, {
+            color: '#667eea',
+            weight: 3,
+            opacity: 0.6,
+            smoothFactor: 1
+        }).addTo(map);
+
+        // Update stats
+        const startDate = new Date(itinerary[0].startDate);
+        const endDate = new Date(itinerary[itinerary.length - 1].endDate);
+        const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+        const daysElapsed = Math.max(0, Math.ceil((today - startDate) / (1000 * 60 * 60 * 24)));
+
+        document.getElementById('daysTotal').textContent = totalDays;
+        document.getElementById('daysElapsed').textContent = Math.min(daysElapsed, totalDays);
+        document.getElementById('citiesCount').textContent = uniqueLocations.size;
+
+        // Fit map to show route
+        const bounds = L.latLngBounds(routeCoordinates);
+        map.fitBounds(bounds, { padding: [50, 50] });
+    </script>
+</body>
+</html>
