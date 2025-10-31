@@ -340,10 +340,23 @@
             currentIndex = 0;
         }
 
-        // If after trip ends
+        // If no current stop found (between destinations or after trip)
         if (!currentStop) {
-            currentStop = itinerary[itinerary.length - 1];
-            currentIndex = itinerary.length - 1;
+            // Find next upcoming destination
+            for (let i = 0; i < itinerary.length; i++) {
+                const startDate = new Date(itinerary[i].startDate);
+                if (today < startDate) {
+                    currentStop = itinerary[i];
+                    currentIndex = i;
+                    break;
+                }
+            }
+
+            // If still no match, we're after the trip - show last destination
+            if (!currentStop) {
+                currentStop = itinerary[itinerary.length - 1];
+                currentIndex = itinerary.length - 1;
+            }
         }
 
         // Format date range
