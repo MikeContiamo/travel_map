@@ -254,7 +254,7 @@
                 <div class="stat-label">Besuchte Städte</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="countriesCount">3</div>
+                <div class="stat-number" id="countriesCount">5</div>
                 <div class="stat-label">Länder</div>
             </div>
         </div>
@@ -263,25 +263,26 @@
     <script>
         // Itinerary data with coordinates and date ranges
         const itinerary = [
-            { startDate: '2025-10-28', endDate: '2025-10-30', location: 'Ladenburg', country: 'Germany', lat: 49.4722, lng: 8.6086, note: 'Pre-trip visit' },
-            { startDate: '2025-11-01', endDate: '2025-11-01', location: 'Frankfurt', country: 'Germany', lat: 50.1109, lng: 8.6821, note: 'Departure' },
-            { startDate: '2025-11-01', endDate: '2025-11-04', location: 'Auckland', country: 'New Zealand', lat: -36.8485, lng: 174.7633, note: 'Cornwall Park, Auckland Domain & free day' },
-            { startDate: '2025-11-04', endDate: '2025-11-08', location: 'Whangarei', country: 'New Zealand', lat: -35.7253, lng: 174.3230, note: 'Beaches, waterfalls, Waipoua & Tane Mahuta' },
-            { startDate: '2025-11-08', endDate: '2025-11-13', location: 'Coromandel', country: 'New Zealand', lat: -36.7577, lng: 175.5008, note: 'Hot Water Beach, Cathedral Cove, Thames & Whangamata' },
-            { startDate: '2025-11-13', endDate: '2025-11-17', location: 'Rotorua', country: 'New Zealand', lat: -38.1368, lng: 176.2497, note: 'Kuirau Park, Wai-O-Tapu, Government Gardens & Polynesian Spa' },
-            { startDate: '2025-11-17', endDate: '2025-11-21', location: 'Tongariro', country: 'New Zealand', lat: -39.2000, lng: 175.5833, note: 'Whakapapa, Glowworm Caves, Taranaki Falls & Mt. Ruapehu' },
-            { startDate: '2025-11-21', endDate: '2025-11-24', location: 'Napier', country: 'New Zealand', lat: -39.4928, lng: 176.9120, note: 'Art Deco city exploration' },
-            { startDate: '2025-11-24', endDate: '2025-11-26', location: 'Wellington', country: 'New Zealand', lat: -41.2865, lng: 174.7762, note: 'Te Papa Museum, Cable Car & Botanical Garden' },
-            { startDate: '2025-11-26', endDate: '2025-11-30', location: 'Kaikoura', country: 'New Zealand', lat: -42.4007, lng: 173.6813, note: 'Ferry to South Island, whale watching & Peninsula Walkway' },
-            { startDate: '2025-11-30', endDate: '2025-12-03', location: 'Christchurch', country: 'New Zealand', lat: -43.5321, lng: 172.6362, note: 'Hagley Park, Botanical Garden & Akaroa trip' },
-            { startDate: '2025-12-03', endDate: '2025-12-07', location: 'Lake Tekapo', country: 'New Zealand', lat: -43.8834, lng: 170.4769, note: 'Camper pickup, lake exploration, Tekapo Springs & Lake Alexandrina' },
-            { startDate: '2025-12-07', endDate: '2025-12-10', location: 'Lake Matheson', country: 'New Zealand', lat: -43.4390, lng: 170.0156, note: 'Mirror reflections, Fox Glacier Valley Walk & Gillespies Beach' },
-            { startDate: '2025-12-10', endDate: '2025-12-12', location: 'Punakaiki', country: 'New Zealand', lat: -42.1125, lng: 171.3358, note: 'Pancake Rocks, Truman Track & Pororari River Track' },
-            { startDate: '2025-12-12', endDate: '2025-12-16', location: 'Marahau', country: 'New Zealand', lat: -40.9667, lng: 173.0167, note: 'Abel Tasman, water taxi & hiking, Split Apple Rock' },
-            { startDate: '2025-12-16', endDate: '2025-12-18', location: 'Christchurch', country: 'New Zealand', lat: -43.5321, lng: 172.6362, note: 'Return to Christchurch' },
-            { startDate: '2025-12-18', endDate: '2025-12-23', location: 'Melbourne', country: 'Australia', lat: -37.8136, lng: 144.9631, note: 'Exploring Melbourne' },
-            { startDate: '2025-12-23', endDate: '2025-12-30', location: 'Sydney', country: 'Australia', lat: -33.8688, lng: 151.2093, note: 'Bondi Beach, Manly Beach & Bondi to Bradley Coastal Walk' },
-            { startDate: '2025-12-30', endDate: '2025-12-30', location: 'Ho Chi Minh City', country: 'Vietnam', lat: 10.8231, lng: 106.6297, note: 'Final destination' }
+            { startDate: '2025-11-01', endDate: '2025-11-01', location: 'Berlin', country: 'Germany', lat: 52.5200, lng: 13.4050, note: 'Abflug' },
+            { startDate: '2025-11-01', endDate: '2025-11-04', location: 'Auckland', country: 'New Zealand', lat: -36.8485, lng: 174.7633, note: 'Ankunft und Erholung' },
+            { startDate: '2025-11-04', endDate: '2025-11-07', location: 'Whangarei', country: 'New Zealand', lat: -35.7253, lng: 174.3230, note: 'Tane Mahuta, Four Sisters Walk, Te Matua Ngahere' },
+            { startDate: '2025-11-08', endDate: '2025-11-12', location: 'Coromandel', country: 'New Zealand', lat: -36.7577, lng: 175.5008, note: 'Hot Water Beach, Hahei Beach' },
+            { startDate: '2025-11-13', endDate: '2025-11-16', location: 'Rotorua', country: 'New Zealand', lat: -38.1368, lng: 176.2497, note: 'Kuirau Park, Wai-O-Tapu, Maori-Dorf' },
+            { startDate: '2025-11-17', endDate: '2025-11-20', location: 'Taupo', country: 'New Zealand', lat: -38.6857, lng: 176.0702, note: 'Lake Taupo' },
+            { startDate: '2025-11-21', endDate: '2025-11-23', location: 'Napier', country: 'New Zealand', lat: -39.4928, lng: 176.9120, note: 'Art Deco Stadt' },
+            { startDate: '2025-11-24', endDate: '2025-11-25', location: 'Wellington', country: 'New Zealand', lat: -41.2865, lng: 174.7762, note: 'Hauptstadt Neuseelands' },
+            { startDate: '2025-11-26', endDate: '2025-11-29', location: 'Kaikoura', country: 'New Zealand', lat: -42.4007, lng: 173.6813, note: 'Whale Watching' },
+            { startDate: '2025-11-30', endDate: '2025-12-02', location: 'Christchurch', country: 'New Zealand', lat: -43.5321, lng: 172.6362, note: 'Südinsel Ankunft' },
+            { startDate: '2025-12-03', endDate: '2025-12-06', location: 'Lake Tekapo', country: 'New Zealand', lat: -43.8834, lng: 170.4769, note: 'Sternenbeobachtung, Lake Pukaki' },
+            { startDate: '2025-12-07', endDate: '2025-12-09', location: 'Lake Matheson', country: 'New Zealand', lat: -43.4390, lng: 170.0156, note: 'Spiegelungen, Fox Glacier' },
+            { startDate: '2025-12-10', endDate: '2025-12-11', location: 'Punakaiki', country: 'New Zealand', lat: -42.1125, lng: 171.3358, note: 'Pancake Rocks' },
+            { startDate: '2025-12-12', endDate: '2025-12-15', location: 'Marahau', country: 'New Zealand', lat: -40.9667, lng: 173.0167, note: 'Abel Tasman National Park' },
+            { startDate: '2025-12-15', endDate: '2025-12-17', location: 'Christchurch', country: 'New Zealand', lat: -43.5321, lng: 172.6362, note: 'Rückkehr nach Christchurch' },
+            { startDate: '2025-12-18', endDate: '2025-12-22', location: 'Melbourne', country: 'Australia', lat: -37.8136, lng: 144.9631, note: 'Stadterkundung' },
+            { startDate: '2025-12-23', endDate: '2025-12-29', location: 'Sydney', country: 'Australia', lat: -33.8688, lng: 151.2093, note: 'Bondi Beach, Weihnachten' },
+            { startDate: '2025-12-30', endDate: '2026-01-09', location: 'Ho Chi Minh City', country: 'Vietnam', lat: 10.8231, lng: 106.6297, note: 'Vietnam Erkundung' },
+            { startDate: '2026-01-10', endDate: '2026-01-25', location: 'Taipeh', country: 'Taiwan', lat: 25.0330, lng: 121.5654, note: 'Taiwan' },
+            { startDate: '2026-01-26', endDate: '2026-01-26', location: 'Berlin', country: 'Germany', lat: 52.5200, lng: 13.4050, note: 'Heimkehr' }
         ];
 
         // Initialize map
